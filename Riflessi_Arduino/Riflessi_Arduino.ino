@@ -21,6 +21,7 @@ void loop()
   Inizio();
   LedRiflessi();
   BuzzerRiflessi();
+  Risultati();
   Riavvio();
 }
 
@@ -134,7 +135,7 @@ void BuzzerRiflessi()
   timerf= timerr-timer;
   delay(5000);
 }
-void Riavvio ()
+void Risultati()
 {
     int tempomedio = (timerf+tempof)/2;
     lcd.clear();
@@ -143,6 +144,34 @@ void Riavvio ()
     lcd.setCursor(0,1);
     lcd.print(tempomedio);
     delay(2500);
+    lcd.clear();
+    if (tempomedio<199)
+    {
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("Congratulazioni! ");
+      lcd.setCursor(0,1);
+      lcd.print("Hai passato      ");
+      delay(750);
+      lcd.setCursor(0,1);
+      lcd.print("il test!!        ");
+      delay(1500);
+    }
+    else
+    {
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("Peccato!!        ");
+      lcd.setCursor(0,1);
+      lcd.print("Non hai passato  ");
+      delay(750);
+      lcd.setCursor(0,1);
+      lcd.print("il test..        ");
+      delay(1500);
+    }
+}
+void Riavvio ()
+{
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("Riavvio arduino    ");
