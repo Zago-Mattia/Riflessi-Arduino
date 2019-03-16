@@ -3,23 +3,25 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 int buzzer = 7;
 int led = 6;
 int button = 8;
-int decisione;
+int tempof=0;
+int timerf=0;
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(9600); // nel caso serva
   lcd.begin(16, 2);
   pinMode(buzzer,OUTPUT);
   pinMode(led,OUTPUT);
   pinMode(button,INPUT);
-
+  tempof=0;
+  timerf=0;
 }
 
 void loop()
 {
-Inizio();
-LedRiflessi();
-BuzzerRiflessi();
-Riavvio();
+  Inizio();
+  LedRiflessi();
+  BuzzerRiflessi();
+  Riavvio();
 }
 
 void Inizio()
@@ -37,12 +39,9 @@ void Inizio()
   lcd.print("iniziare        ");
   delay(1500);
   lcd.setCursor(0,1);
-  lcd.print("                ");;
-
-  while (digitalRead(button) == LOW)
-  {
-
-  }
+  lcd.print("                ");
+  
+  while (digitalRead(button) == LOW){}
     digitalWrite(led, HIGH);
     delay(500);
     digitalWrite(led, LOW); 
@@ -59,7 +58,6 @@ void LedRiflessi()
   lcd.setCursor(0,1);
   lcd.print("test con led     ");
   delay(2000);
-  
   lcd.setCursor(0,0);
   lcd.print("Schiaccia il     ");
   lcd.setCursor(0,1);
@@ -84,19 +82,17 @@ void LedRiflessi()
   delay (tempo);
   digitalWrite(led, HIGH);
   int timer = millis();
-  while (digitalRead(button) == LOW)
-  {
-
-  }
+  while (digitalRead(button) == LOW){}
   digitalWrite(led, LOW);
   int timerr = millis();
   lcd.setCursor(0,0);
   lcd.print("Tempo in ms:     ");
   lcd.setCursor(0,1);
   lcd.print(timerr-timer);
+  tempof= timerr-timer;
   delay(5000);
-  
 }
+
 void BuzzerRiflessi()
 {
   lcd.setCursor(0,0);
@@ -128,21 +124,25 @@ void BuzzerRiflessi()
   delay (tempo);
   tone(buzzer,1000);
   int timer = millis();
-  while (digitalRead(button) == LOW)
-  {
-    
-  }
+  while (digitalRead(button) == LOW){}
   noTone(buzzer);
   int timerr = millis();
   lcd.setCursor(0,0);
   lcd.print("Tempo in ms:     ");
   lcd.setCursor(0,1);
   lcd.print(timerr-timer);
+  timerf= timerr-timer;
   delay(5000);
-  
 }
 void Riavvio ()
 {
+    int tempomedio = (timerf+tempof)/2;
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Tempo medio:");
+    lcd.setCursor(0,1);
+    lcd.print(tempomedio);
+    delay(2500);
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("Riavvio arduino    ");
