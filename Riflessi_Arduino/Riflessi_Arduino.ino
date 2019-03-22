@@ -1,17 +1,24 @@
 #include <LiquidCrystal.h>
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 int buzzer = 7;
-int led = 6;
-int button = 8;
+int button = 8;  
 int tempof=0;
 int timerf=0;
+int portarossa = 13;
+int portaverde = 9;
+int portablu =10;
+int led =0;
 void setup()
 {
   Serial.begin(9600); // nel caso serva
   lcd.begin(16, 2);
   pinMode(buzzer,OUTPUT);
-  pinMode(led,OUTPUT);
   pinMode(button,INPUT);
+  
+  pinMode(portarossa, OUTPUT); 
+  pinMode(portaverde, OUTPUT); 
+  pinMode(portablu, OUTPUT); 
+  
   tempof=0;
   timerf=0;
 }
@@ -43,9 +50,9 @@ void Inizio()
   lcd.print("                ");
   
   while (digitalRead(button) == LOW){}
-    digitalWrite(led, HIGH);
+    digitalWrite(portablu, HIGH);
     delay(500);
-    digitalWrite(led, LOW); 
+    digitalWrite(portablu, LOW);
     tone(buzzer,500,500);
     lcd.setCursor(0,0);
     lcd.print("Avvio test in   ");
@@ -81,17 +88,31 @@ void LedRiflessi()
   lcd.clear();
   int tempo = random(500,7500);
   delay (tempo);
-  digitalWrite(led, HIGH);
+  digitalWrite(portablu, HIGH);
   int timer = millis();
   while (digitalRead(button) == LOW){}
-  digitalWrite(led, LOW);
+  digitalWrite(portablu, LOW);
   int timerr = millis();
+  if ((timerr-timer)==0)
+  {
+    digitalWrite(portarossa, HIGH);
+    lcd.setCursor(0,0);
+    lcd.print("Non vale!!!    ");
+    lcd.setCursor(0,1);
+    lcd.print("Hai barato     ");
+    delay(2000);
+    digitalWrite(portarossa, LOW);
+    Riavvio();
+  }
+  else
+  {
   lcd.setCursor(0,0);
   lcd.print("Tempo in ms:     ");
   lcd.setCursor(0,1);
   lcd.print(timerr-timer);
   tempof= timerr-timer;
   delay(5000);
+  }
 }
 
 void BuzzerRiflessi()
@@ -128,12 +149,26 @@ void BuzzerRiflessi()
   while (digitalRead(button) == LOW){}
   noTone(buzzer);
   int timerr = millis();
+    if ((timerr-timer)==0)
+  {
+    digitalWrite(portarossa, HIGH);
+    lcd.setCursor(0,0);
+    lcd.print("Non vale!!!    ");
+    lcd.setCursor(0,1);
+    lcd.print("Hai barato     ");
+    delay(2000);
+    digitalWrite(portarossa, LOW);
+    Riavvio();
+  }
+  else
+  {
   lcd.setCursor(0,0);
   lcd.print("Tempo in ms:     ");
   lcd.setCursor(0,1);
   lcd.print(timerr-timer);
   timerf= timerr-timer;
   delay(5000);
+  }
 }
 void Risultati()
 {
@@ -148,6 +183,7 @@ void Risultati()
     if (tempomedio<199)
     {
       lcd.clear();
+      digitalWrite(portaverde, HIGH);
       lcd.setCursor(0,0);
       lcd.print("Congratulazioni! ");
       lcd.setCursor(0,1);
@@ -156,9 +192,11 @@ void Risultati()
       lcd.setCursor(0,1);
       lcd.print("il test!!        ");
       delay(1500);
+      digitalWrite(portaverde, LOW);
     }
     else
     {
+      digitalWrite(portarossa, HIGH);
       lcd.clear();
       lcd.setCursor(0,0);
       lcd.print("Peccato!!        ");
@@ -168,6 +206,7 @@ void Risultati()
       lcd.setCursor(0,1);
       lcd.print("il test..        ");
       delay(1500);
+      digitalWrite(portarossa, LOW);
     }
 }
 void Riavvio ()
@@ -181,5 +220,7 @@ void Riavvio ()
        lcd.print(i);
        delay(1000);
     }
-    setup();
+    tempof=0;
+   timerf=0;
+    loop();
 }
