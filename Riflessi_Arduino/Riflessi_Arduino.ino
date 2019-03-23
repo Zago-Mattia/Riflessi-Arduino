@@ -7,7 +7,10 @@ int timerf=0;
 int portarossa = 13;
 int portaverde = 9;
 int portablu =10;
-int led =0;
+int led;
+int risR;
+int risB;
+
 void setup()
 {
   Serial.begin(9600); // nel caso serva
@@ -21,14 +24,23 @@ void setup()
   
   tempof=0;
   timerf=0;
+  risR = 0;
+  risB = 0;
+  led = 0;
 }
 
 void loop()
 {
   Inizio();
-  LedRiflessi();
-  BuzzerRiflessi();
-  Risultati();
+  risR = LedRiflessi();
+  if(risR == 1)
+  {
+    risB = BuzzerRiflessi();
+  }
+  if(risB == 1)
+  {
+    Risultati();
+  }
   Riavvio();
 }
 
@@ -59,7 +71,7 @@ void Inizio()
     lcd.setCursor(0,1);
     lcd.print("corso           ");
 }
-void LedRiflessi()
+int LedRiflessi()
 {
   lcd.setCursor(0,0);
   lcd.print("Avvio primo      ");
@@ -74,7 +86,7 @@ void LedRiflessi()
   lcd.setCursor(0,0);
   lcd.print("accensione del   ");
   lcd.setCursor(0,1);
-  lcd.print("led rosso..      ");
+  lcd.print("led blu..        ");
   delay(2000);
   lcd.clear();
   lcd.print("3..              ");
@@ -93,7 +105,7 @@ void LedRiflessi()
   while (digitalRead(button) == LOW){}
   digitalWrite(portablu, LOW);
   int timerr = millis();
-  if ((timerr-timer)==0)
+  if ((timerr-timer)<80)
   {
     digitalWrite(portarossa, HIGH);
     lcd.setCursor(0,0);
@@ -102,7 +114,7 @@ void LedRiflessi()
     lcd.print("Hai barato     ");
     delay(2000);
     digitalWrite(portarossa, LOW);
-    Riavvio();
+    return 0;
   }
   else
   {
@@ -112,10 +124,11 @@ void LedRiflessi()
   lcd.print(timerr-timer);
   tempof= timerr-timer;
   delay(5000);
+  return 1;
   }
 }
 
-void BuzzerRiflessi()
+int BuzzerRiflessi()
 {
   lcd.setCursor(0,0);
   lcd.print("Avvio secondo    ");
@@ -149,7 +162,7 @@ void BuzzerRiflessi()
   while (digitalRead(button) == LOW){}
   noTone(buzzer);
   int timerr = millis();
-    if ((timerr-timer)==0)
+    if ((timerr-timer)< 80)
   {
     digitalWrite(portarossa, HIGH);
     lcd.setCursor(0,0);
@@ -158,16 +171,17 @@ void BuzzerRiflessi()
     lcd.print("Hai barato     ");
     delay(2000);
     digitalWrite(portarossa, LOW);
-    Riavvio();
+    return 0;
   }
   else
   {
-  lcd.setCursor(0,0);
-  lcd.print("Tempo in ms:     ");
-  lcd.setCursor(0,1);
-  lcd.print(timerr-timer);
-  timerf= timerr-timer;
-  delay(5000);
+    lcd.setCursor(0,0);
+    lcd.print("Tempo in ms:     ");
+    lcd.setCursor(0,1);
+    lcd.print(timerr-timer);
+    timerf= timerr-timer;
+    delay(5000);
+    return 1;
   }
 }
 void Risultati()
@@ -180,7 +194,7 @@ void Risultati()
     lcd.print(tempomedio);
     delay(2500);
     lcd.clear();
-    if (tempomedio<199)
+    if (tempomedio<249)
     {
       lcd.clear();
       digitalWrite(portaverde, HIGH);
@@ -214,13 +228,11 @@ void Riavvio ()
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("Riavvio arduino    ");
-    for (int i = 9;i>=0;i--)
+    for (int i = 5;i>=0;i--)
     {
        lcd.setCursor(0,1);
        lcd.print(i);
        delay(1000);
     }
-    tempof=0;
-   timerf=0;
-    loop();
+    setup();
 }
